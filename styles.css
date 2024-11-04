@@ -44,3 +44,12 @@ button {
     margin-top: 20px;
     font-size: 1.2rem;
 }
+.transaction {
+    background-color: #111;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+}
+.transaction hr {
+    border-color: #333;
+}
