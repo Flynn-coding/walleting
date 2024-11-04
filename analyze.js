@@ -2,7 +2,7 @@ document.getElementById("analyzeButton").addEventListener("click", async () => {
     const walletAddress = document.getElementById("walletAddress").value;
     if (!walletAddress) return alert("Please enter a wallet address");
 
-    const apiKey = "YOUR_API_KEY"; // Add API key here if needed.
+    const apiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkQXQiOjE3MzA2ODQ5MTE4MDksImVtYWlsIjoicmVpZGZseUBzdHVkZW50LmNhcmV5LndhLmVkdS5hdSIsImFjdGlvbiI6InRva2VuLWFwaSIsImFwaVZlcnNpb24iOiJ2MiIsImlhdCI6MTczMDY4NDkxMX0.sYZJWK-ah8tlBfMykGVi9XRoHu99Lz6VwTwioTy0ZNI";
     const url = `https://public-api.solscan.io/account/transactions?address=${walletAddress}&limit=10`;
 
     try {
@@ -10,7 +10,7 @@ document.getElementById("analyzeButton").addEventListener("click", async () => {
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json",
-                "Authorization": apiKey ? `Bearer ${apiKey}` : ""
+                "Authorization": `Bearer ${apiKey}`
             }
         });
 
