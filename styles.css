@@ -1,54 +1,65 @@
 body {
-    margin: 0;
-    background-color: #0c0c0c;
-    color: #00ff00;
+    background-color: black;
+    color: #00FF00;
     font-family: 'Courier New', monospace;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
     overflow: hidden;
     text-align: center;
+    margin: 0;
 }
 
-.container {
-    border: 2px solid #00ff00;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 20px #00ff00;
-    background-color: rgba(0, 0, 0, 0.8);
+h1 {
+    margin-top: 20px;
+    color: #00FF00;
 }
 
-input {
-    width: 300px;
-    padding: 10px;
+#walletAnalyzer {
+    margin-top: 50px;
+}
+
+#walletAddress {
+    font-size: 16px;
+    padding: 8px;
+    width: 250px;
+    margin-right: 10px;
+    background-color: #111;
+    color: #00FF00;
+    border: 1px solid #00FF00;
+}
+
+#analyzeButton {
+    font-size: 16px;
+    padding: 8px 16px;
+    background-color: #00FF00;
     border: none;
-    border-radius: 5px;
-    box-shadow: 0 0 10px #00ff00;
-    color: #00ff00;
-    background-color: #0c0c0c;
-}
-
-button {
-    margin-top: 10px;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    box-shadow: 0 0 10px #00ff00;
-    background-color: #00ff00;
-    color: #000;
+    color: black;
     cursor: pointer;
 }
 
-#results {
+#transactionInfo {
     margin-top: 20px;
-    font-size: 1.2rem;
+    color: #00FF00;
 }
+
+/* Matrix Rain Background */
+#matrixCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1; /* Behind other content */
+    background: black;
+}
+
+/* Styling for Transaction Info */
 .transaction {
     background-color: #111;
     padding: 10px;
     border-radius: 5px;
     margin: 10px 0;
+    text-align: left;
+    max-width: 400px;
+    margin: 10px auto;
 }
 .transaction hr {
     border-color: #333;
