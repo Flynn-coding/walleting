@@ -1,72 +1,48 @@
-let lastFetchedAddress = '';
-let lastFetchedData = [];
+document.getElementById("analyzeButton").addEventListener("click", async () => {
+    const walletAddress = document.getElementById("walletAddress").value;
+    if (!walletAddress) return alert("Please enter a wallet address");
 
-document.getElementById('track-button').addEventListener('click', async () => {
-    const walletAddress = document.getElementById('wallet-input').value.trim();
-    const resultsDiv = document.getElementById('results');
-
-    // Clear previous results
-    resultsDiv.innerHTML = 'Loading...';
-
-    // Use cached data if the same address is fetched
-    if (walletAddress === lastFetchedAddress) {
-        displayResults(lastFetchedData);
-        return;
-    }
-
-    const apiUrl = `https://api.solscan.io/account/tokens?account=${walletAddress}`;
+    const apiKey = "YOUR_API_KEY"; // Add API key here if needed.
+    const url = `https://public-api.solscan.io/account/transactions?address=${walletAddress}&limit=10`;
 
     try {
-        // Show loading indicator
-        resultsDiv.innerHTML = '<p>Loading transactions...</p>';
+        let response = await fetch(url, {
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Authorization": apiKey ? `Bearer ${apiKey}` : ""
+            }
+        });
 
-        // Fetch wallet transactions
-        const response = await fetch(apiUrl);
-
-        // Check if the response is ok (status 200-299)
         if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
+            throw new Error(`Error: ${response.status}`);
         }
 
-        // Parse the JSON response
-        const data = await response.json();
+        let data = await response.json();
+        
+        let transactionInfo = document.getElementById("transactionInfo");
+        transactionInfo.innerHTML = ''; // Clear previous data
 
-        // Check if the API returned success
-        if (data.success && data.data) {
-            const transactions = data.data;
-            const recommendations = analyzeSolanaTransactions(transactions);
-
-            // Cache the results
-            lastFetchedAddress = walletAddress;
-            lastFetchedData = recommendations;
-
-            displayResults(recommendations);
-        } else {
-            throw new Error('No valid transactions found for this wallet address.');
+        if (data.length === 0) {
+            transactionInfo.innerHTML = `<div>No transactions found for this wallet address.</div>`;
+            return;
         }
+
+        // Display transaction details
+        data.forEach(tx => {
+            let txInfo = `
+                <div class="transaction">
+                    <strong>Transaction ID:</strong> ${tx.txHash} <br>
+                    <strong>Time:</strong> ${new Date(tx.blockTime * 1000).toLocaleString()} <br>
+                    <strong>Type:</strong> ${tx.type} <br>
+                    <strong>Fee:</strong> ${tx.fee / Math.pow(10, 9)} SOL
+                </div>
+                <hr>
+            `;
+            transactionInfo.innerHTML += txInfo;
+        });
     } catch (error) {
-        resultsDiv.innerHTML = `<p style="color: red;">Error fetching transactions: ${error.message}. Please check the wallet address and try again.</p>`;
+        console.error("Error fetching transaction data:", error);
+        document.getElementById("transactionInfo").textContent = "Error fetching data. Please try again.";
     }
 });
-
-// Analyze Solana transactions
-function analyzeSolanaTransactions(transactions) {
-    return transactions.map(tx => {
-        const { tokenAmount, tokenMint, timestamp, from, to } = tx; // Ensure these fields exist in your API response
-
-        // Convert timestamp to a Date object
-        const date = new Date(timestamp * 1000);
-        const formattedDate = date.toLocaleString(); // Format the date
-
-        // Create a detailed transaction recommendation
-        return `Transaction of <strong>${tokenAmount}</strong> tokens to <strong>${to}</strong> from <strong>${from}</strong> on <strong>${formattedDate}</strong> (Token Mint: <strong>${tokenMint}</strong>)`;
-    });
-}
-
-// Function to display results
-function displayResults(recommendations) {
-    const resultsDiv = document.getElementById('results');
-    resultsDiv.innerHTML = recommendations.length > 0 
-        ? recommendations.join('<br><br>') 
-        : '<p>No transactions found.</p>';
-}
