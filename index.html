@@ -1,66 +1,23 @@
-body {
-    background-color: black;
-    color: #00FF00;
-    font-family: 'Courier New', monospace;
-    overflow: hidden;
-    text-align: center;
-    margin: 0;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Crypto Wallet Analyzer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Crypto Wallet Analyzer</h1>
+    <div id="walletAnalyzer">
+        <input type="text" id="walletAddress" placeholder="Enter Wallet Address">
+        <button id="analyzeButton">Analyze Wallet</button>
+        <div id="transactionInfo"></div>
+    </div>
 
-h1 {
-    margin-top: 20px;
-    color: #00FF00;
-}
+    <!-- Matrix Rain Background -->
+    <canvas id="matrixCanvas"></canvas>
 
-#walletAnalyzer {
-    margin-top: 50px;
-}
-
-#walletAddress {
-    font-size: 16px;
-    padding: 8px;
-    width: 250px;
-    margin-right: 10px;
-    background-color: #111;
-    color: #00FF00;
-    border: 1px solid #00FF00;
-}
-
-#analyzeButton {
-    font-size: 16px;
-    padding: 8px 16px;
-    background-color: #00FF00;
-    border: none;
-    color: black;
-    cursor: pointer;
-}
-
-#transactionInfo {
-    margin-top: 20px;
-    color: #00FF00;
-}
-
-/* Matrix Rain Background */
-#matrixCanvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: -1; /* Behind other content */
-    background: black;
-}
-
-/* Styling for Transaction Info */
-.transaction {
-    background-color: #111;
-    padding: 10px;
-    border-radius: 5px;
-    margin: 10px 0;
-    text-align: left;
-    max-width: 400px;
-    margin: 10px auto;
-}
-.transaction hr {
-    border-color: #333;
-}
+    <!-- JavaScript Files -->
+    <script src="matrixRain.js"></script>
+    <script src="analyze.js"></script>
+</body>
+</html>
