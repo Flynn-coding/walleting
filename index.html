@@ -2,22 +2,157 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crypto Wallet Analyzer</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background-color: black;
+            color: #00FF00;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+            text-align: center;
+            margin: 0;
+        }
+        h1 {
+            margin-top: 20px;
+            color: #00FF00;
+        }
+        #walletAnalyzer {
+            margin-top: 50px;
+        }
+        #walletAddress {
+            font-size: 16px;
+            padding: 8px;
+            width: 250px;
+            margin-right: 10px;
+            background-color: #111;
+            color: #00FF00;
+            border: 1px solid #00FF00;
+        }
+        #analyzeButton {
+            font-size: 16px;
+            padding: 8px 16px;
+            background-color: #00FF00;
+            border: none;
+            color: black;
+            cursor: pointer;
+        }
+        #transactionInfo {
+            margin-top: 20px;
+            color: #00FF00;
+        }
+        /* Matrix Rain Background */
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background: black;
+        }
+        /* Styling for Transaction Info */
+        .transaction {
+            background-color: #111;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: left;
+            max-width: 400px;
+            margin: 10px auto;
+        }
+        .transaction hr {
+            border-color: #333;
+        }
+    </style>
 </head>
 <body>
     <h1>Crypto Wallet Analyzer</h1>
     <div id="walletAnalyzer">
-        <input type="text" id="walletAddress" placeholder="Enter Wallet Address">
+        <input type="text" id="walletAddress" placeholder="Enter Wallet Address" />
         <button id="analyzeButton">Analyze Wallet</button>
-        <div id="transactionInfo"></div>
     </div>
-
-    <!-- Matrix Rain Background -->
+    <div id="transactionInfo"></div>
     <canvas id="matrixCanvas"></canvas>
 
-    <!-- JavaScript Files -->
-    <script src="matrixRain.js"></script>
-    <script src="analyze.js"></script>
+    <script>
+        // Matrix Effect
+        const canvas = document.getElementById("matrixCanvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const matrixChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%";
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#0F0";
+            ctx.font = fontSize + "px monospace";
+            drops.forEach((y, index) => {
+                const text = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+                const x = index * fontSize;
+                ctx.fillText(text, x, y * fontSize);
+                if (y * fontSize > canvas.height && Math.random() > 0.975) drops[index] = 0;
+                drops[index]++;
+            });
+        }
+        setInterval(drawMatrix, 30);
+
+        // Fetch Transaction Data
+        document.getElementById("analyzeButton").addEventListener("click", async () => {
+            const walletAddress = document.getElementById("walletAddress").value.trim();
+            if (!walletAddress) {
+                alert("Please enter a wallet address");
+                return;
+            }
+
+            const apiKey = "YOUR_API_KEY_HERE"; // Replace with your actual API key
+            const url = `https://api.solscan.io/account/transaction?address=${walletAddress}&limit=10`;
+
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json",
+                        "Authorization": `Bearer ${apiKey}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
+                }
+
+                const data = await response.json();
+
+                let transactionInfo = document.getElementById("transactionInfo");
+                transactionInfo.innerHTML = ''; // Clear previous data
+
+                if (!data || data.length === 0) {
+                    transactionInfo.innerHTML = `<div>No transactions found for this wallet address.</div>`;
+                    return;
+                }
+
+                data.forEach(tx => {
+                    const txInfo = `
+                        <div class="transaction">
+                            <strong>Transaction ID:</strong> ${tx.txHash} <br>
+                            <strong>Time:</strong> ${new Date(tx.blockTime * 1000).toLocaleString()} <br>
+                            <strong>Type:</strong> ${tx.type || 'N/A'} <br>
+                            <strong>Fee:</strong> ${(tx.fee / Math.pow(10, 9)).toFixed(5)} SOL
+                        </div>
+                        <hr>
+                    `;
+                    transactionInfo.innerHTML += txInfo;
+                });
+
+            } catch (error) {
+                console.error("Error fetching transaction data:", error);
+                document.getElementById("transactionInfo").innerHTML = `<div>Error fetching data. Please check the wallet address and try again.</div>`;
+            }
+        });
+    </script>
 </body>
 </html>
